@@ -1,80 +1,83 @@
 package com.company;
 
-        import java.util.Scanner;
-        import java.util.regex.Matcher;
-        import java.util.regex.Pattern;
-
+import java.io.*;
+import java.util.regex.Pattern;
 /**
- * конструктор RegExp создает объект регул€рного выражени€ дл€ сопоставлени€ текста с шаблоном
- * ¬ RegExp провер€ютс€ такие исключени€, как - try/catch
+ * класс Main дл€ общени€ с пользователем и вывода результата в консоль
+ * в классе Main провер€ютс€ исключени€ try/catch
  *
- * @autor “ерехина »рина, группа 21ит35
+ * @author “ерехина »рина, группа 21ит35
  */
-public class RegExp {
-    public static void main(String[] args) {
-        String inputString;
-        Pattern p = Pattern.compile("\\d+\\s[+\\-*%/^]\\s\\d+"); //класс дл€ чтени€ регул€рного выражени€
-        Matcher m; //перебирает последовательно символы, пока не встретит совпадение с шаблоном
+ class Main {
+    public static void main(String[] args) throws Exception {
+        String regExp = "\\d+\\s[+,\\-, *, %, /, ^]\\s\\d+"; //класс дл€ чтени€ регул€рного выражени€
         double result = 0;
-        System.out.println("¬ведите пример: ");
-        try (Scanner scanner = new Scanner(System.in)) {
-            while (true) {
-                if (scanner.hasNextLine()) {
-                    inputString = scanner.nextLine();
-                    m = p.matcher(inputString);
-                    if (m.find()) {
-                        result = split(inputString.split(" "), result);
-                        System.out.println(result);
-                    } else {
-                        System.out.println("¬вод не корректен!");
-                    }
-                    return;
+        String inputString;
+        try (BufferedReader fr = new BufferedReader(new FileReader("src//input.txt"));
+             BufferedWriter ad = new BufferedWriter(new FileWriter("src//output.txt"))) {
 
+            while ((inputString = fr.readLine()) != null) {
+//System.out.println(inputString);
+                if ((inputString.trim().matches(regExp))) {
+                    result = split(inputString.split(" "), result);
+                    ad.write(result + "\n");
+                    System.out.println(result);
+                } else {
+                    ad.write("" + "\n");
+                    System.out.println("Input is not correct!");
                 }
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 
     /**
      * метод дл€ работы с введенно пользователем строкой и поиска в нем нужных значений
-     * @param array - массив дл€ разделени€ строки на значени€
-     * @param previousResult - переменна€, котора€ провер€ет предыдущий результат
-     * @return - используетс€ дл€ выполнени€ €вного возврата из метода calculate
-     * @throws Exception - обрабатывает исключени€
+     *
+     * @param array массив дл€ разрыва строки на значени€, необходимый дл€ длальнейшей работы с ними
+     * @param previousResult переменна€ провер€юща€ предыдущий результат
+     * @return возвращает значени€ дл€ возможности их дальнейшего использовани€ методе calculate
+     * @throws Exception обрабатывает исключени€
      */
     private static double split(String[] array, double previousResult) throws Exception {
         String operand;
-        double number1;
-        double number2;
+        double a;
+        double b;
         if (array.length == 3) {
-            number1 = Double.parseDouble(array[0]);
+            a = Double.parseDouble(array[0]);
             operand = array[1];
-            number2 = Double.parseDouble(array[2]);
-            return calculate(number1, number2, operand);
+            b = Double.parseDouble(array[2]);
+            return calculate(a, b, operand);
         } else {
-            throw new Exception("¬вод не корректен");
+            throw new Exception("Input is not correct");
         }
     }
 
     /**
      * метод дл€ реализации базовых функций калькул€тора
-     * @param number1 - значение 1
-     * @param number2 - значение 2
-     * @param operand - действие, которое должно быть применено к значению
-     * @return - дл€ возвращени€ результата действи€
-     * @throws Exception - дл€ обработки исключени€
+     *
+     * @param a значение 1
+     * @param b значение 2
+     * @param operand действие, которое должно быть применено к значению
+     * @return возвращает результат действи€
+     * @throws Exception обрабатывает исключени€
      */
-    private static double calculate(double number1, double number2, String operand) throws Exception {
-        return switch (operand) {
-            case "+" -> number1 + number2;
-            case "-" -> number1 - number2;
-            case "*" -> number1 * number2;
-            case "/" -> number1 / number2;
-            case "^" -> Math.pow(number1, number2);
-            case "%" -> number1 % number2;
-            default -> throw new Exception("¬вод не корректен");
-        };
+    private static double calculate(double a, double b, String operand) throws Exception {
+        switch (operand) {
+            case "+":
+                return a + b;
+            case "-":
+                return a - b;
+            case "*":
+                return a * b;
+            case "/":
+                return a / b;
+            case "^":
+                return Math.pow(a, b);
+            case "%":
+                return a % b;
+            default:
+                throw new Exception("Input is not correct");
+        }
     }
 }
+
